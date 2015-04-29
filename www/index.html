@@ -8,7 +8,7 @@
     <!-- WARNING: for iOS 7, remove the width=device-width and height=device-height attributes. See https://issues.apache.org/jira/browse/CB-4323 -->
     <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
 
-
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,400' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" type="text/css" href="css/index.css" />
         
     <title>Final App</title>
@@ -16,6 +16,10 @@
 
 <body>
     <div id="wrapper">   
+        <header class="apptitle">
+            <h1 align="center">Final App_DOAN0025</h1>
+        </header>
+        
 		<!-- LIST VIEW -->
     	<div data-role="page" id="list-view">
         	<ul class="tabs">
@@ -26,8 +30,7 @@
         	</ul>
         
         	<div data-role="content">
-            	<h3></h3>
-            	<ul id="imageList" class="grid columns-4"></ul>
+            	<ul id="imageList" class="grid-columns"></ul>
         	</div>   	
     	</div>
 
@@ -40,8 +43,7 @@
             	</li>
         	</ul>
 
-        	<!-- EDIT PHOTO -->
-
+        	<!-- ADD TEXT TO PHOTO -->
         	<div data-role="content">
         	<form class="pure-form pure-form-stacked">
                 <div class="form">
@@ -66,7 +68,7 @@
 
 			<canvas id="photo_c"></canvas>
             <br>
-            <canvas id="thumb"></canvas>
+            <canvas id="thumb_c"></canvas>
 			</div>
             
         </div>   	

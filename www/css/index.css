@@ -1,6 +1,10 @@
+/********************************
+            DEFAULTS
+********************************/
 * {
     padding: 0;
     margin: 0;
+    box-sizing: border-box;
 }
 
 html {
@@ -8,7 +12,7 @@ html {
     max-height: 100%;
     background-color: #4A5360;
     font-family:'Open Sans', sans-serif;
-    font-weight: 300;
+    font-weight: 2rem;
 }
 
 html,
@@ -32,10 +36,6 @@ p {
     width: 100%;
 }
 
-div#list-view {
-    display: block;
-}
-
 [data-role="content"] {
     margin-left: auto;
     margin-right: auto;
@@ -47,9 +47,28 @@ div#list-view {
     padding-bottom: 3rem;
 }
 
+.apptitle {
+    height: 3rem;
+    background: #fff;
+    color: #000;
+}
+
+.apptitle h1{
+    font-family:'Open Sans', sans-serif;
+    font-weight: 1rem;
+    font-size: 1.5rem;
+    text-shadow: 2px 2px 10px #aaa;
+    color: green;
+    padding-top: 0.5rem;
+}
+
+div#list-view {
+    display: block;
+}
+
 
 /********************************
-              TABS
+              TABS/NAVBAR
 ********************************/
 ul.tabs {
     width: 100%;
@@ -62,7 +81,7 @@ ul.tabs {
 }
 
 .tabs li.tab {
-    margin-top: 0;
+    margin:0 0 0 0;
     float: left;
     display: inline-block;
     width: 50%;
@@ -70,11 +89,11 @@ ul.tabs {
 
 .tabs li.tab a {
     display: block;
-    margin-bottom:3rem;
-    font-size: 1rem;
+    margin: 0;
+    font-size: 1.3rem;
     line-height: 4rem;
     height: 4rem;
-    color: #B5B8BE;
+    color: gray;
     text-decoration: none;
     border: none;
     background-color: #fff;
@@ -111,22 +130,25 @@ ul.list-view li {
     -webkit-box-sizing: border-box;
 }
 
-ul.grid.columns-4 li {
+ul.grid-columns li {
     width: 180px;
     height: 130px;
     float: left;
 }
 
-ul.grid.columns-4 li:nth-child(2n){
-    margin: 0 20px 10px 20px;
+ul.grid-columns li:first-child{
+    margin: 20px 20px 10px 20px;
+}
+ul.grid-columns li:nth-child(2n){
+    margin: 20px 20px 10px 20px;
 }
 
-ul.grid.columns-4 li:nth-child(2n+1){
-    margin: 0 0 10px 0;
+ul.grid-columns li:nth-child(2n+1){
+    margin: 20px 0 10px 0;
 }
 
-.caption {
-    font-size: 15px;
+.delete {
+    font-size: 1.1rem;
     width: 180px;
     height: 40px;
     background-color: #fff;
@@ -171,13 +193,14 @@ button {
     height: 400px;
     background-color: #fff;
     border: none;
-    margin: 2rem;
+    margin: 1rem 0 0 0;
 }
 
-#thumb {
+#thumb_c {
     display: inline-block;
-    margin:3rem;
-    width:100%;
+    margin:1.5rem 0 0 0;
+    vertical-align: left;
+    width:18%;
     word-wrap: break-word;
     overflow-wrap: break-word;
 }
@@ -272,7 +295,7 @@ button {
     -moz-border-radius: 5;
     border-radius: 5px;
     color: #ffffff;
-    font-size: 15px;
+    font-size: 1.2rem;
     background: green;
     padding: 10px 20px 10px 20px;
     text-decoration: none;
@@ -295,5 +318,5 @@ input[type=radio] {
     height: 40px;
     background-color: white;
     border: none;
-    margin-top: 2px;
+    margin: 2px 0 0 0;
 }

@@ -7,14 +7,13 @@ var app = {
     numPages: 0,
 
     photo_c: null,
-    thumb: null,
+    thumb_c: null,
     context: null,
     i: null,
 
     init: function () {
         document.addEventListener("deviceready", app.onDeviceReady);
         document.addEventListener("DOMContentLoaded", app.onDomReady);
-
     },
     onDeviceReady: function () {
         console.log(device.uuid);
@@ -36,9 +35,11 @@ var app = {
         numPages = pages.length;
         var links = document.querySelectorAll('[data-role="pagelink"]');
         numLinks = links.length;
+
         for (var i = 0; i < numLinks; i++) {
             links[i].addEventListener("click", app.handleNav, false);
         }
+        
         app.loadPage(null);
 
         document.getElementById("btnClose").addEventListener("click", app.close);
@@ -71,9 +72,9 @@ var app = {
 
         if ((url == "list-view") || (url == null)) {
             console.log("ready to load thumbnails");
-            app.loadImageGrid();
+            app.loadListView();
         } else if (url == "camera") {
-            console.log("ready to take a pic")
+            console.log("ready to take pix")
             app.takePix();
         }
 
@@ -89,9 +90,8 @@ var app = {
         tabs.style.top = total + "px";
     },
 
-    loadImageGrid: function (ev) {
+    loadListView: function (ev) {
         console.log("loading list of image");
-
         var url = "http://m.edumedia.ca/doan0025/mad9022/final-w15/list.php?dev=" + device.uuid;
         sendRequest(url, app.listThumbs, null);
         console.log(url);
@@ -115,7 +115,7 @@ var app = {
 
             var deleteBtn = document.createElement("button");
             deleteBtn.setAttribute("imageId", imageArray.thumbnails[i].id);
-            deleteBtn.className = 'caption';
+            deleteBtn.className = 'delete';
 
             var deleteBtnCaption = document.createTextNode("Delete"); // Create a text node
             deleteBtn.appendChild(deleteBtnCaption); // Append the text to 
@@ -127,145 +127,11 @@ var app = {
             li.appendChild(deleteBtn);
             ul.appendChild(li);
         }
-
-    },
-
-    takePix: function () {
-        navigator.camera.getPicture(app.imgSuccess, app.imgFail, {
-            quality: 75,
-            destinationType: Camera.DestinationType.FILE_URI,
-            sourceType: Camera.PictureSourceType.CAMERA
-        });
-    },
-
-    imgSuccess: function (imageURI) {
-        console.info("success");
-        //console.log(imageURI);
-        app.i = document.createElement("img");
-
-        app.photo_c = document.getElementById('photo_c');
-        app.thumb = document.getElementById('thumb');
-
-        app.photo_c.height = 400;
-        app.photo_c.width = 600;
-        app.context = app.photo_c.getContext('2d');
-
-        //thumb
-        app.thumb.height = 130;
-        app.thumb.width = 180;
-        app.context_thumb = app.thumb.getContext('2d');
-
-        app.i.addEventListener("load", function (ev) {
-            app.context.drawImage(app.i, 0, 0, app.photo_c.width, app.photo_c.height);
-            app.context_thumb.drawImage(app.i, 0, 0, app.thumb.width, app.thumb.height);
-        });
-    
-        app.i.crossOrigin = "";
-        app.i.src = imageURI;
-
-        document.getElementById("addText").addEventListener("click", app.addText);
-        document.getElementById("savePix").addEventListener("click", app.saveImg);
-
-    },
-
-    imgFail: function (message) {
-        console.log('Failed because: ' + message);
-    },
-
-    addText: function (ev) {
-        ev.preventDefault();
-
-        var txt = document.getElementById("text").value;
-        //https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial/Drawing_text
-        var txtTop = document.getElementById("top").checked;
-
-        var w = app.photo_c.width;
-        var h = app.photo_c.height;
-        var middle = app.photo_c.width / 2;
-        var bottom = app.photo_c.height - 50;
-        var top = app.photo_c.height - 350;
-
-        var w_thumb = app.thumb.width;
-        var h_thumb = app.thumb.height;
-        var middle_thumb = app.thumb.width / 2;
-        var bottom_thumb = app.thumb.height - 20;
-        var top_thumb = app.thumb.height - 90;
-
-        if (txt != "") {
-            if (txtTop == true) {
-                //Add Text Full
-                app.context.clearRect(0, 0, app.photo_c.w, app.photo_c.h);
-                //reload the image      
-                app.context.drawImage(app.i, 0, 0, w, h);
-                ////THEN add the new text to the image                    
-                app.context.font = "30px sans-serif";
-                app.context.fillStyle = "white";
-                app.context.textAlign = "center";
-                app.context.fillText(txt, middle, top);
-
-                app.context_thumb.clearRect(0, 0, app.thumb.w, app.thumb.h);
-                //reload the image      
-                app.context_thumb.drawImage(app.i, 0, 0, w_thumb, h_thumb);
-                //THEN add the new text to the image                        
-                app.context_thumb.font = "30px sans-serif";
-                app.context_thumb.fillStyle = "white";
-                app.context_thumb.textAlign = "center";
-                app.context_thumb.fillText(txt, middle_thumb, top_thumb);
-                
-            } else {
-                app.context.clearRect(0, 0, app.photo_c.w, app.photo_c.h);
-                //reload the image      
-                app.context.drawImage(app.i, 0, 0, w, h);
-                //THEN add the new text to the image                        
-                app.context.font = "30px sans-serif";
-                app.context.fillStyle = "white";
-                app.context.textAlign = "center";
-                app.context.fillText(txt, middle, bottom);
-                
-
-                //Add Text Thumb
-                app.context_thumb.clearRect(0, 0, app.thumb.w, app.thumb.h);
-                //reload the image      
-                app.context_thumb.drawImage(app.i, 0, 0, w_thumb, h_thumb);
-                ////THEN add the new text to the image                 
-                app.context_thumb.font = "30px sans-serif";
-                app.context_thumb.fillStyle = "white";
-                app.context_thumb.textAlign = "center";
-                app.context_thumb.fillText(txt, middle_thumb, bottom_thumb);
-            }
-        }
-    },
-
-    //save both full & thumb img
-    saveImg: function (ev) {
-        ev.preventDefault();
-        
-        var fullimage = app.photo_c.toDataURL("image/jpeg");
-        var thumbphoto = app.thumb.toDataURL("image/jpeg");
-
-        fullimage = encodeURIComponent(fullimage);
-        thumbphoto = encodeURIComponent(thumbphoto);
-
-        var url = "http://m.edumedia.ca/doan0025/mad9022/final-w15/save.php";
-        var postData = "dev=" + device.uuid + "&img=" + fullimage + "&thumb=" + thumbphoto ;
-
-        sendRequest(url, app.imgSaved, postData);
-    },
-
-    imgSaved: function (xhr) {
-        alert("Image has been saved!");
-    },
-
-
-    close: function (ev) {
-        document.querySelector("[data-role=modal]").style.display = "none";
-        document.querySelector("[data-role=overlay]").style.display = "none";
     },
 
     fetchFullImage: function (ev) {
         var imageId = ev.target.parentNode.getAttribute("imageId");
         var url = "http://m.edumedia.ca/doan0025/mad9022/final-w15/get.php?dev=" + device.uuid + "&img_id=" + imageId;
-
         sendRequest(url, app.showFullImage, null);
     },
 
@@ -288,13 +154,143 @@ var app = {
         var btnId = ev.target.parentNode.getAttribute("imageId");
     
         var url = "http://m.edumedia.ca/doan0025/mad9022/final-w15/delete.php?dev=" + device.uuid + "&img_id=" + btnId;
-    
         sendRequest(url, app.imageDelete, null);
     },
     
     imageDelete: function(xhr){
-        alert("Image Deleted");
-        app.loadImageGrid();
+        alert("Are you sure to delete?");
+        app.loadListView();
+    },
+
+    close: function (ev) {
+        document.querySelector("[data-role=modal]").style.display = "none";
+        document.querySelector("[data-role=overlay]").style.display = "none";
+    },
+
+    takePix: function () {
+        navigator.camera.getPicture(app.imgSuccess, app.imgFail, {
+            quality: 75,
+            destinationType: Camera.DestinationType.FILE_URI,
+            sourceType: Camera.PictureSourceType.CAMERA
+        });
+    },
+
+    imgSuccess: function (imageURI) {
+        console.info("success");
+        //console.log(imageURI);
+        app.i = document.createElement("img");
+
+        app.photo_c = document.getElementById('photo_c');
+        app.thumb_c = document.getElementById('thumb_c');
+
+        app.photo_c.height = 400;
+        app.photo_c.width = 600;
+        app.context = app.photo_c.getContext('2d');
+
+        //thumb
+        app.thumb_c.height = 120;
+        app.thumb_c.width = 180;
+        app.context_thumb_c = app.thumb_c.getContext('2d');
+
+        app.i.addEventListener("load", function (ev) {
+            app.context.drawImage(app.i, 0, 0, app.photo_c.width, app.photo_c.height);
+            app.context_thumb_c.drawImage(app.i, 0, 0, app.thumb_c.width, app.thumb_c.height);
+        });
+    
+        app.i.crossOrigin = "";
+        app.i.src = imageURI;
+
+        document.getElementById("addText").addEventListener("click", app.addText);
+        document.getElementById("savePix").addEventListener("click", app.saveImg);
+
+    },
+
+    imgFail: function (message) {
+        console.log('Failed because: ' + message);
+    },
+
+    //edit image
+    addText: function (ev) {
+        ev.preventDefault();
+
+        var txt = document.getElementById("text").value;
+        //https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial/Drawing_text
+        var txtTop = document.getElementById("top").checked;
+
+        var w = app.photo_c.width;
+        var h = app.photo_c.height;
+        var middle = app.photo_c.width / 2;
+        var bottom = app.photo_c.height - 50;
+        var top = app.photo_c.height - 350;
+
+        var w_thumb_c = app.thumb_c.width;
+        var h_thumb_c = app.thumb_c.height;
+        var middle_thumb_c = app.thumb_c.width / 2;
+        var bottom_thumb_c = app.thumb_c.height - 20;
+        var top_thumb_c = app.thumb_c.height - 90;
+
+        if (txt != "") {
+            if (txtTop == true) {
+                //Add Text Full
+                app.context.clearRect(0, 0, app.photo_c.w, app.photo_c.h);
+                //reload the image      
+                app.context.drawImage(app.i, 0, 0, w, h);
+                ////THEN add the new text to the image                    
+                app.context.font = "30px sans-serif";
+                app.context.fillStyle = "white";
+                app.context.textAlign = "center";
+                app.context.fillText(txt, middle, top);
+
+                app.context_thumb_c.clearRect(0, 0, app.thumb_c.w, app.thumb_c.h);
+                //reload the image      
+                app.context_thumb_c.drawImage(app.i, 0, 0, w_thumb_c, h_thumb_c);
+                //THEN add the new text to the image                        
+                app.context_thumb_c.font = "30px sans-serif";
+                app.context_thumb_c.fillStyle = "white";
+                app.context_thumb_c.textAlign = "center";
+                app.context_thumb_c.fillText(txt, middle_thumb_c, top_thumb_c);
+                
+            } else {
+                app.context.clearRect(0, 0, app.photo_c.w, app.photo_c.h);
+                //reload the image      
+                app.context.drawImage(app.i, 0, 0, w, h);
+                //THEN add the new text to the image                        
+                app.context.font = "30px sans-serif";
+                app.context.fillStyle = "white";
+                app.context.textAlign = "center";
+                app.context.fillText(txt, middle, bottom);
+                
+
+                //Add Text Thumb
+                app.context_thumb_c.clearRect(0, 0, app.thumb_c.w, app.thumb_c.h);
+                //reload the image      
+                app.context_thumb_c.drawImage(app.i, 0, 0, w_thumb_c, h_thumb_c);
+                ////THEN add the new text to the image                 
+                app.context_thumb_c.font = "15px sans-serif";
+                app.context_thumb_c.fillStyle = "white";
+                app.context_thumb_c.textAlign = "center";
+                app.context_thumb_c.fillText(txt, middle_thumb_c, bottom_thumb_c);
+            }
+        }
+    },
+
+    //save both full & thumb img
+    saveImg: function (ev) {
+        ev.preventDefault();
+        
+        var fullimage = app.photo_c.toDataURL("image/jpeg");
+        var thumbphoto = app.thumb_c.toDataURL("image/jpeg");
+
+        fullimage = encodeURIComponent(fullimage);
+        thumbphoto = encodeURIComponent(thumbphoto);
+
+        var url = "http://m.edumedia.ca/doan0025/mad9022/final-w15/save.php";
+        var postData = "dev=" + device.uuid + "&img=" + fullimage + "&thumb=" + thumbphoto ;
+        sendRequest(url, app.imgSaved, postData);
+    },
+
+    imgSaved: function (xhr) {
+        alert("Image has been saved!");
     },
 }
 
